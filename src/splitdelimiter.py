@@ -21,5 +21,8 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                         ])
                 else:
                     raise Exception("No closing delimiter found - invalid markdown")
+            else:
+                new_nodes.append(n)
         else:
             new_nodes.append(n)
+    return new_nodes
