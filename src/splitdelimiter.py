@@ -31,12 +31,6 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                         ]
                     result_nodes.extend(split_nodes_delimiter([TextNode(end_text, TextType.TEXT)], delimiter, text_type))
                     new_nodes.extend(result_nodes)
-                    #     [
-                    #         TextNode(start_text, TextType.TEXT),
-                    #         TextNode(middle_text, text_type),
-                    #         TextNode(end_text, TextType.TEXT)
-                    #     ]
-                    # )
             elif len(split) == 2:
                 raise Exception("No closing delimiter found - invalid markdown")
             else:

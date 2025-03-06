@@ -45,12 +45,13 @@ class TestSplitDelimiter(unittest.TestCase):
         ])
 
     def test_multiple_delimiter_pairs(self):
-        nodes = split_nodes_delimiter([TextNode("Normal and **bold**", TextType.TEXT)], "**", TextType.BOLD)
+        nodes = split_nodes_delimiter([TextNode("Normal and **bold** and normal **and bold**", TextType.TEXT)], "**", TextType.BOLD)
         self.assertEqual(nodes, [
             TextNode("Normal and ", TextType.TEXT),
-            TextNode("bold", TextType.BOLD)
+            TextNode("bold", TextType.BOLD),
+            TextNode(" and normal ", TextType.TEXT),
+            TextNode("and bold", TextType.BOLD)
         ])
-
 
 if __name__ == '__main__':
     unittest.main()
