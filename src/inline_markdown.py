@@ -1,6 +1,45 @@
-from extract import *
-from splitdelimiter import split_nodes_delimiter
+import re
 from textnode import TextNode, TextType
+
+
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    new_nodes = []
+    for n in old_nodes:
+        if n.text_type == TextType.TEXT:
+            split = n.text.split(delimiter, 2)
+            if len(split) == 3:
+                start_text = split[0]
+                middle_text = split[1]
+                end_text = split[2]
+                if not start_text:
+                    new_nodes.extend(
+                        [
+                            TextNode(middle_text, text_type),
+                            TextNode(end_text, TextType.TEXT)
+                        ]
+                    )
+                elif not end_text:
+                    new_nodes.extend(
+                        [
+                            TextNode(start_text, TextType.TEXT),
+                            TextNode(middle_text, text_type)
+                        ]
+                    )
+                else:
+                    result_nodes = [
+                            TextNode(start_text, TextType.TEXT),
+                            TextNode(middle_text, text_type),
+                        ]
+                    result_nodes.extend(split_nodes_delimiter([TextNode(end_text, TextType.TEXT)], delimiter, text_type))
+                    new_nodes.extend(result_nodes)
+            elif len(split) == 2:
+                raise Exception("No closing delimiter found - invalid markdown")
+            else:
+                new_nodes.append(n)
+        else:
+            new_nodes.append(n)
+    return new_nodes
+
 
 def split_nodes_image(old_nodes):
     result_nodes = []
@@ -43,6 +82,7 @@ def split_nodes_link(old_nodes):
             result_nodes.append(TextNode(original_text, TextType.TEXT))
     return result_nodes
 
+
 def text_to_textnodes(text):
     result_nodes = [TextNode(text, TextType.TEXT)]
     result_nodes = split_nodes_delimiter(result_nodes, "**", TextType.BOLD)
@@ -51,3 +91,10 @@ def text_to_textnodes(text):
     result_nodes = split_nodes_image(result_nodes)
     result_nodes = split_nodes_link(result_nodes)
     return result_nodes
+
+
+def extract_images(text):
+    return re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
+
+def extract_links(text):
+    return re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", text)
