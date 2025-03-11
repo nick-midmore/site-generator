@@ -1,4 +1,5 @@
 from extract import *
+from splitdelimiter import split_nodes_delimiter
 from textnode import TextNode, TextType
 
 def split_nodes_image(old_nodes):
@@ -40,4 +41,13 @@ def split_nodes_link(old_nodes):
             original_text = sections[1]
         if original_text:
             result_nodes.append(TextNode(original_text, TextType.TEXT))
+    return result_nodes
+
+def text_to_textnodes(text):
+    result_nodes = [TextNode(text, TextType.TEXT)]
+    result_nodes = split_nodes_delimiter(result_nodes, "**", TextType.BOLD)
+    result_nodes = split_nodes_delimiter(result_nodes, "_", TextType.ITALIC)
+    result_nodes = split_nodes_delimiter(result_nodes, "`", TextType.CODE)
+    result_nodes = split_nodes_image(result_nodes)
+    result_nodes = split_nodes_link(result_nodes)
     return result_nodes
